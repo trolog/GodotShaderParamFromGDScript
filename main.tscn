@@ -1,0 +1,48 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://icon.gd" type="Script" id=1]
+[ext_resource path="res://icon.png" type="Texture" id=2]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+
+uniform float value : hint_range(0,1);
+uniform sampler2D noise_texture;
+
+void fragment()
+{
+	vec4 current_pixel = texture(TEXTURE,UV);
+	vec4 noise_pixel = texture(noise_texture,UV);
+	
+	if(noise_pixel.r > value)
+	{
+		COLOR.a -= 1f;
+	}
+	else
+	{
+		COLOR = current_pixel;
+	}
+}"
+
+[sub_resource type="OpenSimplexNoise" id=2]
+seed = 20
+octaves = 1
+period = 25.6
+persistence = 0.4
+
+[sub_resource type="NoiseTexture" id=3]
+noise = SubResource( 2 )
+
+[sub_resource type="ShaderMaterial" id=4]
+shader = SubResource( 1 )
+shader_param/value = 1.0
+shader_param/noise_texture = SubResource( 3 )
+
+[node name="main" type="Node2D"]
+
+[node name="icon" type="Sprite" parent="."]
+material = SubResource( 4 )
+position = Vector2( 478.998, 292 )
+scale = Vector2( 7.42188, 5.96875 )
+texture = ExtResource( 2 )
+script = ExtResource( 1 )
